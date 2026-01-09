@@ -69,6 +69,8 @@ export default function TaskForm({ open, onClose, onSubmit, existingTitles, init
 
   const handleSubmit = () => {
     const safeTime = typeof timeTaken === 'number' && timeTaken > 0 ? timeTaken : 1; // auto-correct
+
+    // ✅ FIXED: Added createdAt and completedAt fields
     const payload: Omit<Task, 'id'> & { id?: string } = {
       title: title.trim(),
       revenue: typeof revenue === 'number' ? revenue : 0,
@@ -76,8 +78,11 @@ export default function TaskForm({ open, onClose, onSubmit, existingTitles, init
       priority: ((priority || 'Medium') as Priority),
       status: ((status || 'Todo') as Status),
       notes: notes.trim() || undefined,
+      createdAt: initial?.createdAt || new Date().toISOString(), // ✅ ADDED
+      completedAt: status === 'Done' ? new Date().toISOString() : initial?.completedAt, // ✅ ADDED
       ...(initial ? { id: initial.id } : {}),
     };
+
     onSubmit(payload);
     onClose();
   };
